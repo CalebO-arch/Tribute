@@ -273,12 +273,40 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
 
   // Add new tribute to Firestore
   const handleAddTributeSubmit = async (tributeData: Omit<Tribute, 'id' | 'createdAt' | 'likes'>) => {
+    // Sanitize payload: Firestore throws an error if any property has value `undefined`
+    const cleanData: Record<string, any> = {
+      name: tributeData.name ? String(tributeData.name).trim() : 'Anonymous',
+      relationship: tributeData.relationship || 'Family',
+      message: tributeData.message ? String(tributeData.message).trim() : '',
+      likes: 0,
+      createdAt: serverTimestamp()
+    };
+
+    if (tributeData.location && typeof tributeData.location === 'string' && tributeData.location.trim()) {
+      cleanData.location = tributeData.location.trim();
+    }
+    if (tributeData.category && typeof tributeData.category === 'string' && tributeData.category.trim()) {
+      cleanData.category = tributeData.category.trim();
+    }
+    if (tributeData.fontStyle && typeof tributeData.fontStyle === 'string') {
+      cleanData.fontStyle = tributeData.fontStyle;
+    }
+    if (tributeData.theme && typeof tributeData.theme === 'string') {
+      cleanData.theme = tributeData.theme;
+    }
+    if (tributeData.image && typeof tributeData.image === 'string' && tributeData.image.trim()) {
+      cleanData.image = tributeData.image.trim();
+    }
+    if (tributeData.audioUrl && typeof tributeData.audioUrl === 'string') {
+      cleanData.audioUrl = tributeData.audioUrl;
+      cleanData.audioDuration = tributeData.audioDuration || 0;
+    }
+    if (typeof tributeData.isPinned === 'boolean') {
+      cleanData.isPinned = tributeData.isPinned;
+    }
+
     try {
-      await addDoc(collection(db, 'tributes'), {
-        ...tributeData,
-        likes: 0,
-        createdAt: serverTimestamp()
-      });
+      await addDoc(collection(db, 'tributes'), cleanData);
     } catch (e: any) {
       console.error("Error adding tribute to Firestore:", e);
       const specificError = e?.message || e?.code || "Unknown error";

@@ -110,9 +110,12 @@ export default function TopNavbar({
             <Flame className="w-5 h-5 text-warm-gold" />
           </div>
           <div>
-            <span className="font-serif font-semibold tracking-wide text-base block leading-tight">
-              Eternal Tribute
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="font-serif font-semibold tracking-wide text-base block leading-tight">
+                Eternal Tribute
+              </span>
+              <span className="px-1.5 py-0.2 text-[9px] font-mono font-semibold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">v2.1-live</span>
+            </div>
             <span className={`text-[10px] tracking-wider uppercase block font-sans opacity-70 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               Living Memory
             </span>

@@ -167,14 +167,20 @@ export default function AddTributeModal({ isOpen, onClose, onSubmit, isDark }: A
     setError(null);
 
     try {
-      await onSubmit({
+      const payload: any = {
         name: name.trim(),
         relationship: relationship === 'Other' ? (customRelationship.trim() || 'Other') : relationship,
         text: text.trim(),
-        image,
-        video,
         theme
-      });
+      };
+      if (image && typeof image === 'string' && image.trim()) {
+        payload.image = image.trim();
+      }
+      if (video && typeof video === 'string' && video.trim()) {
+        payload.video = video.trim();
+      }
+
+      await onSubmit(payload);
       
       // Reset form
       setName('');
