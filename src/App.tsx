@@ -279,9 +279,10 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
         likes: 0,
         createdAt: serverTimestamp()
       });
-    } catch (e) {
-      console.error("Error adding tribute:", e);
-      throw new Error("Could not save tribute. Please try again.");
+    } catch (e: any) {
+      console.error("Error adding tribute to Firestore:", e);
+      const specificError = e?.message || e?.code || "Unknown error";
+      throw new Error(`Could not save tribute: ${specificError}`);
     }
   };
 
