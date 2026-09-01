@@ -580,20 +580,6 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
 
                 {/* Write a tribute and filter toolbar */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-                  {isAdminMode && (
-                    <button
-                      onClick={async () => {
-                        if (window.confirm("Are you sure you want to reset all tributes? This will delete all collected tributes permanently so you can start fresh.")) {
-                          await handleResetAllTributes();
-                          alert("All tributes have been successfully reset!");
-                        }
-                      }}
-                      className="px-3.5 py-2 rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                    >
-                      <Trash className="w-3.5 h-3.5" />
-                      <span>Reset Tributes</span>
-                    </button>
-                  )}
                   {/* Search Bar */}
                   <div className="relative">
                     <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -687,7 +673,6 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
           onLikeTribute={handleLikeTribute}
           onEditTribute={(tribute) => setEditingTribute(tribute)}
           onDeleteTribute={handleDeleteTribute}
-          onResetAllTributes={handleResetAllTributes}
         />
       )}
 
@@ -751,7 +736,6 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
         onClose={() => setIsCustomizerOpen(false)} 
         info={memorialInfo} 
         onSave={handleSaveMemorialInfo} 
-        onResetAllTributes={handleResetAllTributes}
         onResetAllCandles={handleResetAllCandles}
         isDark={isDark} 
         defaultBanner={defaultBanner}

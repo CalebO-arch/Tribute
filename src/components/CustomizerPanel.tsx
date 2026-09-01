@@ -9,7 +9,6 @@ interface CustomizerPanelProps {
   onClose: () => void;
   info: DeceasedPersonInfo;
   onSave: (updatedInfo: DeceasedPersonInfo) => Promise<void>;
-  onResetAllTributes?: () => Promise<void>;
   onResetAllCandles?: () => Promise<void>;
   isDark: boolean;
   defaultBanner: string;
@@ -21,7 +20,6 @@ export default function CustomizerPanel({
   onClose, 
   info, 
   onSave, 
-  onResetAllTributes,
   onResetAllCandles,
   isDark, 
   defaultBanner, 
@@ -43,25 +41,8 @@ export default function CustomizerPanel({
   const [gallery, setGallery] = useState<string[]>(info.gallery || []);
 
   const [isSaving, setIsSaving] = useState(false);
-  const [isResettingTributes, setIsResettingTributes] = useState(false);
   const [isResettingCandles, setIsResettingCandles] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const handleResetTributesClick = async () => {
-    if (!onResetAllTributes) return;
-    if (window.confirm("Are you sure you want to reset all tributes? This will delete all collected tributes permanently so you can start fresh.")) {
-      setIsResettingTributes(true);
-      try {
-        await onResetAllTributes();
-        setError(null);
-        alert("All tributes have been successfully reset!");
-      } catch (e) {
-        setError("Could not reset tributes. Please try again.");
-      } finally {
-        setIsResettingTributes(false);
-      }
-    }
-  };
 
   const handleResetCandlesClick = async () => {
     if (!onResetAllCandles) return;
@@ -923,33 +904,17 @@ export default function CustomizerPanel({
               </div>
 
               {/* Data Reset Section */}
-              <div className="pt-4 border-t border-rose-500/20 space-y-3">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-rose-500 flex items-center gap-1.5">
-                  <Trash className="w-3.5 h-3.5" />
-                  <span>Memorial Data Management</span>
-                </label>
-                <p className="text-xs text-gray-400 font-light">
-                  Clear stored tributes or candles when starting a fresh collection drive.
-                </p>
+              {onResetAllCandles && (
+                <div className="pt-4 border-t border-amber-500/20 space-y-3">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Virtual Candles Management</span>
+                  </label>
+                  <p className="text-xs text-gray-400 font-light">
+                    Clear lighted candles if you wish to start a new prayer & remembrance cycle.
+                  </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {onResetAllTributes && (
-                    <button
-                      type="button"
-                      disabled={isResettingTributes}
-                      onClick={handleResetTributesClick}
-                      className="w-full py-2.5 px-3 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      {isResettingTributes ? (
-                        <div className="w-3.5 h-3.5 border-2 border-rose-400/30 border-t-rose-400 rounded-full animate-spin" />
-                      ) : (
-                        <Trash className="w-3.5 h-3.5" />
-                      )}
-                      <span>Reset All Tributes</span>
-                    </button>
-                  )}
-
-                  {onResetAllCandles && (
+                  <div>
                     <button
                       type="button"
                       disabled={isResettingCandles}
@@ -963,9 +928,9 @@ export default function CustomizerPanel({
                       )}
                       <span>Reset All Candles</span>
                     </button>
-                  )}
+                  </div>
                 </div>
-              </div>
+              )}
             </form>
 
             {/* Footer Actions */}

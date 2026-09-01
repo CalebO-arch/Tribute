@@ -15,7 +15,6 @@ interface TributesPageProps {
   onLikeTribute: (id: string) => void;
   onEditTribute?: (tribute: Tribute) => void;
   onDeleteTribute?: (id: string) => Promise<void> | void;
-  onResetAllTributes?: () => Promise<void>;
 }
 
 export default function TributesPage({
@@ -27,8 +26,7 @@ export default function TributesPage({
   onAddTributeClick,
   onLikeTribute,
   onEditTribute,
-  onDeleteTribute,
-  onResetAllTributes
+  onDeleteTribute
 }: TributesPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRelationship, setSelectedRelationship] = useState('All');
@@ -103,22 +101,6 @@ export default function TributesPage({
 
         {/* CTA Buttons */}
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          {isAdmin && onResetAllTributes && (
-            <button
-              onClick={async () => {
-                if (window.confirm("Are you sure you want to reset all tributes? This will delete all collected tributes permanently so you can start fresh.")) {
-                  await onResetAllTributes();
-                  alert("All tributes have been successfully reset!");
-                }
-              }}
-              className="px-4 py-3 rounded-full text-xs font-semibold flex items-center gap-1.5 bg-rose-500/15 hover:bg-rose-500/25 text-rose-500 border border-rose-500/30 cursor-pointer transition-all"
-              title="Reset all tributes"
-            >
-              <Trash className="w-3.5 h-3.5" />
-              <span>Reset Tributes</span>
-            </button>
-          )}
-
           <button
             onClick={onAddTributeClick}
             className="px-6 py-3.5 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2 bg-gradient-to-r from-warm-gold to-yellow-600 text-white hover:brightness-110 shadow-lg cursor-pointer transition-all"
