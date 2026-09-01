@@ -14,14 +14,14 @@ interface EditTributeModalProps {
 }
 
 const RELATIONSHIPS = [
+  'Wife',
   'Son',
   'Daughter',
-  'Wife',
-  'Family',
-  'Grandchild',
-  'Friend',
   'Son in-law',
   'Daughter in-law',
+  'Grandchild',
+  'Family',
+  'Friend',
   'Other'
 ];
 

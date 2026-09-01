@@ -34,7 +34,7 @@ export default function TributesPage({
   const [selectedRelationship, setSelectedRelationship] = useState('All');
   const [sortBy, setSortBy] = useState<'newest' | 'likes'>('newest');
 
-  const relationshipsList = ['All', 'Son', 'Daughter', 'Wife', 'Family', 'Grandchild', 'Friend', 'Son in-law', 'Daughter in-law', 'Other'];
+  const relationshipsList = ['All', 'Wife', 'Son', 'Daughter', 'Son in-law', 'Daughter in-law', 'Grandchild', 'Family', 'Friend', 'Other'];
 
   // Filter & Sort tributes
   const filteredTributes = tributes
