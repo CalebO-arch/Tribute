@@ -19,7 +19,8 @@ const RELATIONSHIPS = [
   'Grandchild',
   'Friend',
   'Son in-law',
-  'Daughter in-law'
+  'Daughter in-law',
+  'Other'
 ];
 
 const THEMES = [

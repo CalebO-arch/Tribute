@@ -485,7 +485,7 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
   const totalCandles = candles.length;
   const totalHearts = tributes.reduce((sum, trib) => sum + (trib.likes || 0), 0);
 
-  const relationshipsList = ['All', 'Son', 'Daughter', 'Wife', 'Family', 'Grandchild', 'Friend', 'Son in-law', 'Daughter in-law'];
+  const relationshipsList = ['All', 'Son', 'Daughter', 'Wife', 'Family', 'Grandchild', 'Friend', 'Son in-law', 'Daughter in-law', 'Other'];
 
   if (loading || !memorialInfo) {
     return (
