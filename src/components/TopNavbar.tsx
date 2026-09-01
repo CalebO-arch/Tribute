@@ -125,25 +125,23 @@ export default function TopNavbar({
         {/* Right Header Actions */}
         <div className="flex items-center gap-2 sm:gap-3" ref={menuRef}>
           
-          {/* Creator Setup Toggle (In Dev Workspace) */}
-          {isDevWorkspace && (
-            <div className="hidden sm:flex items-center gap-2">
-              <button
-                onClick={() => setIsAdminMode(!isAdminMode)}
-                className={`px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 ${
-                  isAdminMode 
-                    ? 'bg-amber-500 text-white shadow-sm' 
-                    : isDark 
-                      ? 'bg-white/5 hover:bg-white/10 text-gray-300' 
-                      : 'bg-black/5 hover:bg-black/10 text-gray-700'
-                }`}
-                title={isAdminMode ? "Disable Creator Mode" : "Enable Creator Setup Mode"}
-              >
-                {isAdminMode ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-                <span>{isAdminMode ? 'Creator Active' : 'Setup'}</span>
-              </button>
-            </div>
-          )}
+          {/* Creator Setup Toggle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsAdminMode(!isAdminMode)}
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-all flex items-center gap-1.5 ${
+                isAdminMode 
+                  ? 'bg-amber-500 text-white shadow-sm' 
+                  : isDark 
+                    ? 'bg-white/5 hover:bg-white/10 text-gray-300' 
+                    : 'bg-black/5 hover:bg-black/10 text-gray-700'
+              }`}
+              title={isAdminMode ? "Disable Creator Mode" : "Enable Creator Setup Mode"}
+            >
+              {isAdminMode ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+              <span className="hidden xs:inline sm:inline">{isAdminMode ? 'Creator Active' : 'Setup'}</span>
+            </button>
+          </div>
 
           {/* Dark / Light Toggle */}
           <button

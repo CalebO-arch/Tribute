@@ -14,6 +14,7 @@ interface TributesPageProps {
   onAddTributeClick: () => void;
   onLikeTribute: (id: string) => void;
   onEditTribute?: (tribute: Tribute) => void;
+  onDeleteTribute?: (id: string) => Promise<void> | void;
   onResetAllTributes?: () => Promise<void>;
 }
 
@@ -26,6 +27,7 @@ export default function TributesPage({
   onAddTributeClick,
   onLikeTribute,
   onEditTribute,
+  onDeleteTribute,
   onResetAllTributes
 }: TributesPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -230,6 +232,7 @@ export default function TributesPage({
                 isDark={isDark} 
                 isAdmin={isAdmin}
                 onEdit={onEditTribute}
+                onDelete={onDeleteTribute}
               />
             ))}
           </AnimatePresence>

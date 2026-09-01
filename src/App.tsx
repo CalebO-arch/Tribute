@@ -72,14 +72,20 @@ export default function App() {
 
   // Theme and Admin state
   const [isDark, setIsDark] = useState(true);
-  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [isAdminMode, setIsAdminMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('living_memorial_admin');
+      if (saved !== null) return JSON.parse(saved);
+    } catch (e) {}
+    return isDevWorkspace;
+  });
 
-  // Enforce admin mode to be disabled outside the development workspace
-  useEffect(() => {
-    if (!isDevWorkspace) {
-      setIsAdminMode(false);
-    }
-  }, [isDevWorkspace]);
+  const handleToggleAdminMode = (val: boolean) => {
+    setIsAdminMode(val);
+    try {
+      localStorage.setItem('living_memorial_admin', JSON.stringify(val));
+    } catch (e) {}
+  };
   
   // Data State
   const [memorialInfo, setMemorialInfo] = useState<DeceasedPersonInfo | null>(null);
@@ -516,7 +522,7 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
         setIsDark={setIsDark}
         isDevWorkspace={isDevWorkspace}
         isAdminMode={isAdminMode}
-        setIsAdminMode={setIsAdminMode}
+        setIsAdminMode={handleToggleAdminMode}
         handleCopyLink={handleCopyLink}
         copiedLink={copiedLink}
       />
@@ -645,6 +651,7 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
                         isDark={isDark} 
                         isAdmin={isAdminMode}
                         onEdit={(tribute) => setEditingTribute(tribute)}
+                        onDelete={handleDeleteTribute}
                       />
                     ))}
                   </AnimatePresence>
@@ -679,6 +686,7 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
           onAddTributeClick={() => setIsTributeModalOpen(true)}
           onLikeTribute={handleLikeTribute}
           onEditTribute={(tribute) => setEditingTribute(tribute)}
+          onDeleteTribute={handleDeleteTribute}
           onResetAllTributes={handleResetAllTributes}
         />
       )}

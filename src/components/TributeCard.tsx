@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { Heart, Clock, User, Quote, Edit3 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Heart, Clock, User, Quote, Edit3, Trash2, Loader2, AlertCircle } from 'lucide-react';
 import { Tribute } from '../types';
 import { renderVideoMedia } from '../utils/mediaUtils';
 
@@ -10,11 +10,15 @@ interface TributeCardProps {
   isDark: boolean;
   isAdmin?: boolean;
   onEdit?: (tribute: Tribute) => void;
+  onDelete?: (id: string) => Promise<void> | void;
   key?: string | number;
 }
 
-export default function TributeCard({ tribute, onLike, isDark, isAdmin, onEdit }: TributeCardProps) {
+export default function TributeCard({ tribute, onLike, isDark, isAdmin, onEdit, onDelete }: TributeCardProps) {
   const [liked, setLiked] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Map card theme to Tailwind classes
   const themeStyles = {
@@ -75,6 +79,18 @@ export default function TributeCard({ tribute, onLike, isDark, isAdmin, onEdit }
     setTimeout(() => setLiked(false), 800);
   };
 
+  const handleDirectDelete = async () => {
+    if (!onDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await onDelete(tribute.id);
+    } catch (err: any) {
+      setDeleteError(err?.message || "Failed to delete");
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <motion.div
       layout
@@ -82,7 +98,7 @@ export default function TributeCard({ tribute, onLike, isDark, isAdmin, onEdit }
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.4 }}
-      className={`break-inside-avoid mb-6 w-full rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-300 flex flex-col ${currentStyle}`}
+      className={`break-inside-avoid mb-6 w-full rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-300 flex flex-col relative ${currentStyle}`}
     >
       {/* Shared Video if exists */}
       {tribute.video && (
@@ -104,41 +120,82 @@ export default function TributeCard({ tribute, onLike, isDark, isAdmin, onEdit }
       )}
 
       {/* Quote symbol for card visual interest */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center">
+      <div className="flex items-start justify-between mb-3 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center shrink-0">
             <User className={`w-4 h-4 ${isDark ? 'text-gray-400' : 'text-gray-500'}`} />
           </div>
-          <div>
-            <h4 className={`font-serif font-medium text-base ${isDark ? 'text-warm-cream' : 'text-warm-slate'}`}>
+          <div className="min-w-0">
+            <h4 className={`font-serif font-medium text-base truncate ${isDark ? 'text-warm-cream' : 'text-warm-slate'}`}>
               {tribute.name}
             </h4>
             <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-gray-500 mt-0.5">
-              <Clock className="w-3.5 h-3.5" />
+              <Clock className="w-3.5 h-3.5 shrink-0" />
               <span>{getFormattedDate()}</span>
             </div>
           </div>
         </div>
 
-        {/* Relationship Badge & Admin Edit Button */}
-        <div className="flex items-center gap-2">
+        {/* Relationship Badge & Action Controls */}
+        <div className="flex items-center gap-1.5 shrink-0">
           {tribute.relationship && (
             <span className={`text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full ${selectedTheme.badge}`}>
               {tribute.relationship}
             </span>
           )}
 
-          {isAdmin && onEdit && (
-            <button
-              onClick={() => onEdit(tribute)}
-              className="p-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white transition-all cursor-pointer"
-              title="Edit Tribute (Creator Mode)"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-            </button>
+          {/* Inline Delete Confirmation or Action Buttons */}
+          {confirmDelete ? (
+            <div className="flex items-center gap-1 bg-rose-500/10 border border-rose-500/30 rounded-full px-2 py-0.5">
+              <span className="text-[10px] text-rose-500 font-medium">Delete?</span>
+              <button
+                onClick={handleDirectDelete}
+                disabled={isDeleting}
+                className="text-[10px] font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full hover:bg-rose-600 cursor-pointer disabled:opacity-50 flex items-center gap-1"
+              >
+                {isDeleting && <Loader2 className="w-2.5 h-2.5 animate-spin" />}
+                <span>Yes</span>
+              </button>
+              <button
+                onClick={() => { setConfirmDelete(false); setDeleteError(null); }}
+                disabled={isDeleting}
+                className="text-[10px] font-medium text-gray-400 hover:text-gray-200 px-1 cursor-pointer"
+              >
+                No
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              {onEdit && (
+                <button
+                  onClick={() => onEdit(tribute)}
+                  className="p-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white transition-all cursor-pointer"
+                  title="Edit Tribute"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                </button>
+              )}
+
+              {onDelete && (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="p-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 hover:bg-rose-500 hover:text-white transition-all cursor-pointer"
+                  title="Delete Tribute"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>
+
+      {deleteError && (
+        <div className="mb-2 p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-1.5">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+          <span>{deleteError}</span>
+        </div>
+      )}
 
       {/* Tribute Content text */}
       <div className="relative flex-1 py-1">

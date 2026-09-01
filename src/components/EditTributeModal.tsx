@@ -55,6 +55,7 @@ export default function EditTributeModal({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
@@ -192,15 +193,15 @@ export default function EditTributeModal({
 
   const handleDeleteClick = async () => {
     if (!tribute || !onDelete) return;
-    if (!window.confirm("Are you sure you want to delete this tribute?")) return;
 
     setIsDeleting(true);
+    setError(null);
     try {
       await onDelete(tribute.id);
+      setShowDeleteConfirm(false);
       onClose();
     } catch (err: any) {
       setError(err?.message || 'Failed to delete tribute.');
-    } finally {
       setIsDeleting(false);
     }
   };
@@ -420,17 +421,45 @@ export default function EditTributeModal({
               />
             </div>
 
+            {/* Delete Confirmation Banner */}
+            {showDeleteConfirm && (
+              <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs text-rose-400">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+                  <span>Permanently delete this tribute from the memorial?</span>
+                </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-400 hover:text-white cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDeleteClick}
+                    disabled={isDeleting}
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rose-500 text-white hover:bg-rose-600 cursor-pointer shadow-sm flex items-center gap-1.5"
+                  >
+                    {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Form Action Buttons */}
             <div className="pt-3 flex items-center justify-between border-t border-black/5 dark:border-white/10">
-              {onDelete ? (
+              {onDelete && !showDeleteConfirm ? (
                 <button
                   type="button"
-                  onClick={handleDeleteClick}
+                  onClick={() => setShowDeleteConfirm(true)}
                   disabled={isDeleting || isSubmitting}
-                  className="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-500 hover:bg-rose-500/10 flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
-                  <span>Delete</span>
+                  <span>Delete Tribute</span>
                 </button>
               ) : <div />}
 
@@ -438,6 +467,7 @@ export default function EditTributeModal({
                 <button
                   type="button"
                   onClick={onClose}
+                  disabled={isSubmitting || isDeleting}
                   className="px-4 py-2 rounded-full text-xs font-medium opacity-70 hover:opacity-100 cursor-pointer"
                 >
                   Cancel
@@ -445,7 +475,7 @@ export default function EditTributeModal({
 
                 <button
                   type="submit"
-                  disabled={isSubmitting || isDeleting}
+                  disabled={isSubmitting || isDeleting || showDeleteConfirm}
                   className="px-6 py-2.5 rounded-full text-xs font-semibold bg-gradient-to-r from-warm-gold to-yellow-600 text-white hover:brightness-110 disabled:opacity-50 cursor-pointer shadow-md"
                 >
                   {isSubmitting ? 'Saving Changes...' : 'Save Changes'}
