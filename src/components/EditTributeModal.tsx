@@ -16,15 +16,12 @@ interface EditTributeModalProps {
 const RELATIONSHIPS = [
   'Son',
   'Daughter',
-  'Spouse / Partner',
-  'Family Member',
-  'Sibling',
+  'Wife',
+  'Family',
   'Grandchild',
   'Friend',
-  'Colleague',
-  'Neighbor',
-  'Classmate',
-  'Other'
+  'Son in-law',
+  'Daughter in-law'
 ];
 
 const THEMES = [
