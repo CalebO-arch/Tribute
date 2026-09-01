@@ -241,10 +241,14 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
     
     const unsubscribe = onSnapshot(tributesQuery, (snapshot) => {
       const fetchedTributes: Tribute[] = [];
-      snapshot.forEach((doc) => {
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const tributeMsg = data.text || data.message || '';
         fetchedTributes.push({
-          id: doc.id,
-          ...doc.data()
+          id: docSnap.id,
+          ...data,
+          text: tributeMsg,
+          message: tributeMsg
         } as Tribute);
       });
       setTributes(fetchedTributes);
@@ -272,12 +276,17 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
   }, []);
 
   // Add new tribute to Firestore
-  const handleAddTributeSubmit = async (tributeData: Omit<Tribute, 'id' | 'createdAt' | 'likes'>) => {
+  const handleAddTributeSubmit = async (tributeData: any) => {
+    // Extract message content from either text or message
+    const messageContent = (tributeData.text || tributeData.message || '').trim();
+
     // Sanitize payload: Firestore throws an error if any property has value `undefined`
     const cleanData: Record<string, any> = {
       name: tributeData.name ? String(tributeData.name).trim() : 'Anonymous',
       relationship: tributeData.relationship || 'Family',
-      message: tributeData.message ? String(tributeData.message).trim() : '',
+      text: messageContent,
+      message: messageContent,
+      theme: tributeData.theme || 'slate',
       likes: 0,
       createdAt: serverTimestamp()
     };
@@ -291,11 +300,11 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
     if (tributeData.fontStyle && typeof tributeData.fontStyle === 'string') {
       cleanData.fontStyle = tributeData.fontStyle;
     }
-    if (tributeData.theme && typeof tributeData.theme === 'string') {
-      cleanData.theme = tributeData.theme;
-    }
     if (tributeData.image && typeof tributeData.image === 'string' && tributeData.image.trim()) {
       cleanData.image = tributeData.image.trim();
+    }
+    if (tributeData.video && typeof tributeData.video === 'string' && tributeData.video.trim()) {
+      cleanData.video = tributeData.video.trim();
     }
     if (tributeData.audioUrl && typeof tributeData.audioUrl === 'string') {
       cleanData.audioUrl = tributeData.audioUrl;
@@ -317,8 +326,16 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
   // Update existing tribute in Firestore (Creator Mode)
   const handleUpdateTribute = async (tributeId: string, updatedData: Partial<Tribute>) => {
     try {
+      const tributeMsg = (updatedData.text || (updatedData as any).message || '').trim();
+      const cleanUpdate: Record<string, any> = {
+        ...updatedData
+      };
+      if (tributeMsg) {
+        cleanUpdate.text = tributeMsg;
+        cleanUpdate.message = tributeMsg;
+      }
       const docRef = doc(db, 'tributes', tributeId);
-      await updateDoc(docRef, updatedData);
+      await updateDoc(docRef, cleanUpdate);
     } catch (e) {
       console.error("Error updating tribute:", e);
       throw new Error("Could not update tribute. Please try again.");
@@ -445,9 +462,10 @@ An Icon, Elder Ajiboye remains the pillar of Ajiboye family. He remains the rall
 
   // Filter & Search logic
   const filteredTributes = tributes.filter((trib) => {
-    const matchesSearch = 
-      trib.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      trib.text.toLowerCase().includes(searchQuery.toLowerCase());
+    const textContent = (trib.text || trib.message || '').toLowerCase();
+    const nameContent = (trib.name || '').toLowerCase();
+    const query = searchQuery.toLowerCase();
+    const matchesSearch = nameContent.includes(query) || textContent.includes(query);
     
     const matchesRelationship = 
       selectedRelationship === 'All' || 

@@ -194,7 +194,7 @@ export default function GalleryPage({
                     )}
                   </div>
                   <p className="text-xs sm:text-sm text-gray-400 line-clamp-3 leading-relaxed whitespace-pre-wrap">
-                    "{tribute.text}"
+                    "{tribute.text || tribute.message || ''}"
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[11px] text-gray-500">

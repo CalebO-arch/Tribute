@@ -65,7 +65,7 @@ export default function EditTributeModal({
   useEffect(() => {
     if (tribute) {
       setName(tribute.name || '');
-      setText(tribute.text || '');
+      setText(tribute.text || tribute.message || '');
       setImage(tribute.image);
       setVideo(tribute.video);
       setVideoUrlInput(tribute.video && !tribute.video.startsWith('data:') ? tribute.video : '');
@@ -172,10 +172,12 @@ export default function EditTributeModal({
 
     try {
       const finalRelationship = relationship === 'Other' ? (customRelationship.trim() || 'Other') : relationship;
+      const msgContent = text.trim();
       await onUpdate(tribute.id, {
         name: name.trim(),
         relationship: finalRelationship,
-        text: text.trim(),
+        text: msgContent,
+        message: msgContent,
         image: image || '',
         video: video || '',
         theme

@@ -167,10 +167,12 @@ export default function AddTributeModal({ isOpen, onClose, onSubmit, isDark }: A
     setError(null);
 
     try {
+      const messageContent = text.trim();
       const payload: any = {
         name: name.trim(),
         relationship: relationship === 'Other' ? (customRelationship.trim() || 'Other') : relationship,
-        text: text.trim(),
+        text: messageContent,
+        message: messageContent,
         theme
       };
       if (image && typeof image === 'string' && image.trim()) {

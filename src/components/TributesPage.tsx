@@ -37,9 +37,10 @@ export default function TributesPage({
   // Filter & Sort tributes
   const filteredTributes = tributes
     .filter((trib) => {
-      const matchesSearch = 
-        trib.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trib.text.toLowerCase().includes(searchQuery.toLowerCase());
+      const textContent = (trib.text || trib.message || '').toLowerCase();
+      const nameContent = (trib.name || '').toLowerCase();
+      const query = searchQuery.toLowerCase();
+      const matchesSearch = nameContent.includes(query) || textContent.includes(query);
       
       const matchesRelationship = 
         selectedRelationship === 'All' || 

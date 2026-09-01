@@ -144,7 +144,7 @@ export default function TributeCard({ tribute, onLike, isDark, isAdmin, onEdit }
       <div className="relative flex-1 py-1">
         <Quote className={`absolute top-0 -left-1 w-8 h-8 opacity-[0.06] ${selectedTheme.accent}`} />
         <p className={`text-sm sm:text-base leading-relaxed whitespace-pre-wrap relative z-10 font-light ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-          {tribute.text}
+          {tribute.text || tribute.message || ''}
         </p>
       </div>
 

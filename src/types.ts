@@ -18,8 +18,15 @@ export interface Tribute {
   name: string;
   relationship: string;
   text: string;
+  message?: string;
   image?: string;
   video?: string;
+  location?: string;
+  category?: string;
+  fontStyle?: string;
+  audioUrl?: string;
+  audioDuration?: number;
+  isPinned?: boolean;
   createdAt: any; // Firestore Timestamp or ISO string
   likes: number;
   theme: 'amber' | 'rose' | 'lavender' | 'slate' | 'gold';
